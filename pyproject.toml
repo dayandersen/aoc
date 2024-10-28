@@ -1,0 +1,19 @@
+[tool.black]
+line-length = 88            # Maximum line length before wrapping
+target-version = ['py39']   # Python version to target for compatibility
+include = '\.pyi?$'         # Files to format (Python files and type stubs)
+
+[tool.mypy]
+python_version = "3.9"                  # Python version for type checking
+warn_return_any = true                  # Warn when a function returns Any
+warn_unused_configs = true              # Warn about unused config options
+disallow_untyped_defs = true           # All functions must have type annotations
+disallow_incomplete_defs = true         # All parameters must have type annotations
+check_untyped_defs = true              # Type check bodies of functions without annotations
+disallow_untyped_decorators = true     # Decorators must have type annotations
+no_implicit_optional = true            # Don't assume None is valid for missing params
+warn_redundant_casts = true            # Warn about unnecessary type casts
+warn_unused_ignores = true             # Warn about unnecessary # type: ignore
+warn_no_return = true                  # Warn about functions that never return
+warn_unreachable = true                # Warn about unreachable code
+ignore_missing_imports = true        # Don't error on missing type hints in imports
