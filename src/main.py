@@ -30,15 +30,20 @@ def get_solver_class(year: int, day: int) -> type[AdventSolver]:
         raise ImportError(f"Failed to load solver for day {day}: {e}")
 
 
-def format_input_file_location(year: int, day: int) -> str:
-    return f"input/year_{year}/day_{day}.txt"
+def format_input_file_location(year: int, day: int, load_test_data: bool) -> str:
+    print(f"load_test_data: {load_test_data}")
+    return (
+        f"input/year_{year}/test_day_{day}.txt"
+        if load_test_data
+        else f"input/year_{year}/day_{day}.txt"
+    )
 
 
 def pull_days_input(year: int, day: int) -> str:
     url = f"https://adventofcode.com/{year}/day/{day}/input"
     print(f"Requesting data from {url}")
     r = requests.get(url, headers={"Cookie": os.getenv("COOKIE")})
-    file_path = format_input_file_location(year, day)
+    file_path = format_input_file_location(year, day, False)
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     # Now write the file
@@ -51,10 +56,12 @@ def pull_days_input(year: int, day: int) -> str:
     return r.text
 
 
-def load_days_input(year: int, day: int) -> list[str]:
+def load_days_input(year: int, day: int, load_test_data: bool) -> list[str]:
     try:
-        print(f"Trying to open input file at {format_input_file_location(year, day)}")
-        input_data = open(format_input_file_location(year, day))
+        print(
+            f"Trying to open input file at {format_input_file_location(year, day, load_test_data)}"
+        )
+        input_data = open(format_input_file_location(year, day, load_test_data))
         print("Succesfully pulled data from file")
         return input_data.read().split("\n")
     except:
@@ -85,16 +92,22 @@ def parse_args() -> argparse.Namespace:
         choices=range(2015, 2024),
     )
 
+    parser.add_argument(
+        "--test",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use test data",
+    )
     return parser.parse_args()
 
 
 def run_day() -> None:
     print("Starting")
     args = parse_args()
-    print(f"Parsed args were year={args.year}, day={args.day}")
+    print(f"Parsed args were year={args.year}, day={args.day}, test={args.test}")
     solver_class = get_solver_class(args.year, args.day)
     solver = solver_class()
-    data = load_days_input(args.year, args.day)
+    data = load_days_input(args.year, args.day, args.test)
     print(solver.part_1(input_data=data))
     print(solver.part_2(input_data=data))
 
